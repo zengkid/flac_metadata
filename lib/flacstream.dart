@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'metadata.dart';
 
 class FlacInfo {
-  File _file;
+  final File _file;
 
   FlacInfo(this._file);
 
@@ -52,7 +52,7 @@ class FlacInfo {
 }
 
 class StreamReader {
-  Uint8List _rawData;
+  final Uint8List _rawData;
   int dataLength;
   String _bitData;
   int _index = 0;
