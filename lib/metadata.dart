@@ -5,6 +5,7 @@ import 'package:hex/hex.dart';
 
 import 'flacstream.dart';
 
+/// flac block type
 enum BlockType {
   STREAMINFO,
   PADDING,
@@ -15,6 +16,7 @@ enum BlockType {
   PICTURE
 }
 
+/// Flac Metadata
 abstract class Metadata {
   BlockType blockType;
   bool isLast;
@@ -26,6 +28,7 @@ abstract class Metadata {
   }
 }
 
+/// flac stream info block type
 class StreamInfo extends Metadata {
   static const MIN_BLOCK_SIZE = 16; // bits
   static const MAX_BLOCK_SIZE = 16; // bits
@@ -67,6 +70,7 @@ class StreamInfo extends Metadata {
   }
 }
 
+/// flac padding block type
 class Padding extends Metadata {
   String padding;
 
@@ -81,6 +85,7 @@ class Padding extends Metadata {
   }
 }
 
+/// flac application block type
 class Application extends Metadata {
   static const APPLICATION_ID_SIZE = 32;
   String id;
@@ -98,6 +103,7 @@ class Application extends Metadata {
   }
 }
 
+/// flac seek table block type
 class SeekTable extends Metadata {
   var points = <SeekPoint>[];
 
@@ -138,6 +144,8 @@ class SeekPoint {
   }
 }
 
+
+/// flac vorbis comment block type
 class VorbisComment extends Metadata {
   int vendorLength;
   String vendorString;
@@ -164,6 +172,7 @@ class VorbisComment extends Metadata {
   }
 }
 
+/// flac picture block type
 class Picture extends Metadata {
   int pictureType;
   int mimeTypeByteCount;
@@ -202,6 +211,7 @@ class Picture extends Metadata {
   }
 }
 
+/// flac cue sheet block type
 class CueSheet extends Metadata {
   static const MEDIA_CATALOG_NUMBER_SIZE = 128 * 8; // bits
   static const LEAD_IN_SIZE = 64; // bits

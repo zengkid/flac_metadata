@@ -1,3 +1,6 @@
+## 1.0.3
+- add api document 
+
 ## 1.0.2
 - update readme.md to add sample usage.
 
