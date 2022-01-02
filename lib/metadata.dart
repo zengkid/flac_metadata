@@ -21,7 +21,7 @@ abstract class Metadata {
   BlockType blockType;
   bool isLast;
   int dataLength;
-  StreamReader _reader;
+  late StreamReader _reader;
 
   Metadata(this.blockType, this.isLast, Uint8List rawData, this.dataLength) {
     _reader = StreamReader(rawData, dataLength);
@@ -40,15 +40,15 @@ class StreamInfo extends Metadata {
   static const TOTAL_SAMPLES_SIZE = 36; // bits
   static const MD5SUM_SIZE = 128; // bits
 
-  int minBlockSize;
-  int maxBlockSize;
-  int minFrameSize;
-  int maxFrameSize;
-  int sampleRate;
-  int channels;
-  int bitsPerSample;
-  int totalSamples;
-  String md5sum;
+  late int minBlockSize;
+  late int maxBlockSize;
+  late int minFrameSize;
+  late int maxFrameSize;
+  late int sampleRate;
+  late int channels;
+  late int bitsPerSample;
+  late int totalSamples;
+  late String md5sum;
 
   StreamInfo(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.STREAMINFO, isLast, rawData, dataLength) {
@@ -72,7 +72,7 @@ class StreamInfo extends Metadata {
 
 /// flac padding block type
 class Padding extends Metadata {
-  String padding;
+  late String padding;
 
   Padding(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.PADDING, isLast, rawData, dataLength) {
@@ -88,8 +88,8 @@ class Padding extends Metadata {
 /// flac application block type
 class Application extends Metadata {
   static const APPLICATION_ID_SIZE = 32;
-  String id;
-  String data;
+  late String id;
+  late String data;
 
   Application(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.APPLICATION, isLast, rawData, dataLength) {
@@ -147,9 +147,9 @@ class SeekPoint {
 
 /// flac vorbis comment block type
 class VorbisComment extends Metadata {
-  int vendorLength;
-  String vendorString;
-  int numComments;
+  late int vendorLength;
+  late String vendorString;
+  late int numComments;
   List<String> comments = [];
 
   VorbisComment(bool isLast, Uint8List rawData, int dataLength)
@@ -174,18 +174,18 @@ class VorbisComment extends Metadata {
 
 /// flac picture block type
 class Picture extends Metadata {
-  int pictureType;
-  int mimeTypeByteCount;
-  String mimeString;
-  int descStringByteCount;
-  String descString;
-  int picPixelWidth;
-  int picPixelHeight;
-  int picBitsPerPixel;
-  int picColorCount;
-  int picByteCount;
+  late int pictureType;
+  late int mimeTypeByteCount;
+  late String mimeString;
+  late int descStringByteCount;
+  String? descString;
+  late int picPixelWidth;
+  late int picPixelHeight;
+  late int picBitsPerPixel;
+  late int picColorCount;
+  late int picByteCount;
 
-  Uint8List image;
+  late Uint8List image;
 
   Picture(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.PICTURE, isLast, rawData, dataLength) {
@@ -219,7 +219,7 @@ class CueSheet extends Metadata {
   static const RESERVED_SIZE = 7 + 258 * 8; // bits
   static const NUM_TRACKS_SIZE = 8; // bits
 
-  Uint8List mediaCatalogNumber;
+  late Uint8List mediaCatalogNumber;
   int leadIn = 0; // The number of lead-in samples.
   bool isCD =
       false; // true if CUESHEET corresponds to a Compact Disc, else false
@@ -258,12 +258,12 @@ class CueTrack {
   static const NUM_INDICES_SIZE = 8; // bits
 
   StreamReader reader;
-  int offset; // Track offset in samples, relative to the beginning of the FLAC audio stream.
-  int number; // The track number.
+  late int offset; // Track offset in samples, relative to the beginning of the FLAC audio stream.
+  late int number; // The track number.
   Uint8List isrc = Uint8List(13); // Track ISRC.
-  int type; // The track type: 0 for audio, 1 for non-audio.
-  int preEmphasis; // The pre-emphasis flag: 0 for no pre-emphasis, 1 for pre-emphasis.
-  int numIndices; // The number of track index points.
+  late int type; // The track type: 0 for audio, 1 for non-audio.
+  late int preEmphasis; // The pre-emphasis flag: 0 for no pre-emphasis, 1 for pre-emphasis.
+  late int numIndices; // The number of track index points.
   var indices = <
       CueIndex>[]; //// NULL if num_indices == 0, else pointer to array of index points.
 
@@ -295,8 +295,8 @@ class CueIndex {
   static const RESERVED_SIZE = 3 * 8; // bits
 
   StreamReader reader;
-  int offset; // Offset in samples, relative to the track offset, of the index point.
-  int number;
+  late int offset; // Offset in samples, relative to the track offset, of the index point.
+  late int number;
 
   CueIndex(this.reader) {
     offset = reader.getInt(OFFSET_SIZE);
