@@ -48,6 +48,8 @@ class FlacInfo {
       metadata = CueSheet(isLast, rawData, length);
     } else if (blockType == 6) {
       metadata = Picture(isLast, rawData, length);
+    } else {
+      throw ArgumentError('Illegal blockType.');
     }
     return metadata;
   }
@@ -57,7 +59,7 @@ class FlacInfo {
 class StreamReader {
   final Uint8List _rawData;
   int dataLength;
-  String _bitData;
+  late String _bitData;
   int _index = 0;
 
   /// constructor
