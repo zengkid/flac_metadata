@@ -15,20 +15,25 @@ class FlacInfo {
   Future<List<Metadata>> readMetadatas() async {
     var rf = _file.openSync();
     var metadatas = <Metadata>[];
-    var fileType = rf.readSync(4);
-    if (String.fromCharCodes(fileType) == 'fLaC') {
-      var isLast = false;
-      while (!isLast) {
-        var metaBlockHeader = rf.readSync(1);
-        var header = metaBlockHeader[0];
-        isLast = ((header & 0x80) >> 7) == 1;
-        var type = header & 0x7F;
-        var sizes = rf.readSync(3);
-        var dataLength = (sizes[0] << 16) + (sizes[1] << 8) + sizes[2];
-        var metadataBytes = rf.readSync(dataLength);
-        var metadata = _createMetadata(type, isLast, metadataBytes, dataLength);
-        metadatas.add(metadata);
+    try {
+      var fileType = rf.readSync(4);
+      if (String.fromCharCodes(fileType) == 'fLaC') {
+        var isLast = false;
+        while (!isLast) {
+          var metaBlockHeader = rf.readSync(1);
+          var header = metaBlockHeader[0];
+          isLast = ((header & 0x80) >> 7) == 1;
+          var type = header & 0x7F;
+          var sizes = rf.readSync(3);
+          var dataLength = (sizes[0] << 16) + (sizes[1] << 8) + sizes[2];
+          var metadataBytes = rf.readSync(dataLength);
+          var metadata =
+              _createMetadata(type, isLast, metadataBytes, dataLength);
+          metadatas.add(metadata);
+        }
       }
+    } finally {
+      rf.closeSync();
     }
     return metadatas;
   }
