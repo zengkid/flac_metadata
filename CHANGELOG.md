@@ -1,3 +1,6 @@
+## 1.0.4
+- migrate to null safety 
+
 ## 1.0.3
 - add api document 
 
