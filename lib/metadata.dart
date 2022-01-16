@@ -50,6 +50,7 @@ class StreamInfo extends Metadata {
   late int totalSamples;
   late String md5sum;
 
+  ///create StreamInfo
   StreamInfo(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.STREAMINFO, isLast, rawData, dataLength) {
     minBlockSize = _reader.getInt(MIN_BLOCK_SIZE);
@@ -74,6 +75,7 @@ class StreamInfo extends Metadata {
 class Padding extends Metadata {
   late String padding;
 
+  //create Padding
   Padding(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.PADDING, isLast, rawData, dataLength) {
     padding = _reader.getString(dataLength);
@@ -91,6 +93,7 @@ class Application extends Metadata {
   late String id;
   late String data;
 
+  ///create Application
   Application(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.APPLICATION, isLast, rawData, dataLength) {
     id = _reader.getString(APPLICATION_ID_SIZE);
@@ -107,6 +110,7 @@ class Application extends Metadata {
 class SeekTable extends Metadata {
   var points = <SeekPoint>[];
 
+  ///create SeekTable
   SeekTable(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.SEEKTABLE, isLast, rawData, dataLength) {
     var pointNum = dataLength ~/ 18;
@@ -127,6 +131,7 @@ class SeekTable extends Metadata {
   }
 }
 
+/// flac seek point
 class SeekPoint {
   static const SAMPLE_NUMBER_SIZE = 64;
   static const STREAM_OFFSET_SIZE = 64;
@@ -136,6 +141,7 @@ class SeekPoint {
   int streamOffset;
   int frameSamples;
 
+  /// create SeekPoint
   SeekPoint(this.sampleNumber, this.streamOffset, this.frameSamples);
 
   @override
@@ -144,7 +150,6 @@ class SeekPoint {
   }
 }
 
-
 /// flac vorbis comment block type
 class VorbisComment extends Metadata {
   late int vendorLength;
@@ -152,6 +157,7 @@ class VorbisComment extends Metadata {
   late int numComments;
   List<String> comments = [];
 
+  ///create VorbisComment
   VorbisComment(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.VORBIS_COMMENT, isLast, rawData, dataLength) {
     vendorLength = _reader.getLittleEndianInt();
@@ -187,6 +193,7 @@ class Picture extends Metadata {
 
   late Uint8List image;
 
+  ///create Picture
   Picture(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.PICTURE, isLast, rawData, dataLength) {
     pictureType = _reader.getInt(32);
@@ -226,7 +233,9 @@ class CueSheet extends Metadata {
   int numTracks = 0; // The number of tracks.
   var tracks = <CueTrack>[];
 
-  // NULL if num_tracks == 0, else pointer to array of tracks
+  ///create CueSheet
+  ///
+  /// NULL if num_tracks == 0, else pointer to array of tracks
   CueSheet(bool isLast, Uint8List rawData, int dataLength)
       : super(BlockType.CUESHEET, isLast, rawData, dataLength) {
     mediaCatalogNumber = _reader.getUint8List(MEDIA_CATALOG_NUMBER_SIZE);
@@ -248,6 +257,7 @@ class CueSheet extends Metadata {
   }
 }
 
+///flac cue track
 class CueTrack {
   static const OFFSET_SIZE = 64; // bits
   static const NUMBER_SIZE = 8; // bits
@@ -258,15 +268,18 @@ class CueTrack {
   static const NUM_INDICES_SIZE = 8; // bits
 
   StreamReader reader;
-  late int offset; // Track offset in samples, relative to the beginning of the FLAC audio stream.
+  late int
+      offset; // Track offset in samples, relative to the beginning of the FLAC audio stream.
   late int number; // The track number.
   Uint8List isrc = Uint8List(13); // Track ISRC.
   late int type; // The track type: 0 for audio, 1 for non-audio.
-  late int preEmphasis; // The pre-emphasis flag: 0 for no pre-emphasis, 1 for pre-emphasis.
+  late int
+      preEmphasis; // The pre-emphasis flag: 0 for no pre-emphasis, 1 for pre-emphasis.
   late int numIndices; // The number of track index points.
   var indices = <
       CueIndex>[]; //// NULL if num_indices == 0, else pointer to array of index points.
 
+  ///create CueTrack
   CueTrack(this.reader) {
     offset = reader.getInt(CueTrack.OFFSET_SIZE);
     number = reader.getInt(CueTrack.NUMBER_SIZE);
@@ -289,15 +302,18 @@ class CueTrack {
   }
 }
 
+///flac Cue index
 class CueIndex {
   static const OFFSET_SIZE = 64; // bits
   static const NUMBER_SIZE = 8; // bits
   static const RESERVED_SIZE = 3 * 8; // bits
 
   StreamReader reader;
-  late int offset; // Offset in samples, relative to the track offset, of the index point.
+  late int
+      offset; // Offset in samples, relative to the track offset, of the index point.
   late int number;
 
+  ///create CueIndex
   CueIndex(this.reader) {
     offset = reader.getInt(OFFSET_SIZE);
     number = reader.getInt(NUMBER_SIZE);

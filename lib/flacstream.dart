@@ -7,6 +7,8 @@ import 'metadata.dart';
 class FlacInfo {
   final File _file;
 
+  ///create FlacInfo by file
+  ///[_file] is flac file type
   FlacInfo(this._file);
 
   /// reade all metadata from flac file
