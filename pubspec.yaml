@@ -1,6 +1,6 @@
 name: flac_metadata
 description: A cross platform dart package to extract meta data from flac files.
-version: 1.0.8
+version: 1.1.0
 repository: https://github.com/zengkid/flac_metadata
 homepage: https://github.com/zengkid/flac_metadata
 issue_tracker: https://github.com/zengkid/flac_metadata/issues

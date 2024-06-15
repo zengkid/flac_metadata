@@ -1,6 +1,8 @@
+## 1.1.0
+- bug fixes
+
 ## 1.0.8
-- Close file after reading metadata 
-- Generate bitData only when necessary
+- bug fixes
 
 ## 1.0.4
 - migrate to null safety 
