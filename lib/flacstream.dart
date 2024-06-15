@@ -15,20 +15,25 @@ class FlacInfo {
   Future<List<Metadata>> readMetadatas() async {
     var rf = _file.openSync();
     var metadatas = <Metadata>[];
-    var fileType = rf.readSync(4);
-    if (String.fromCharCodes(fileType) == 'fLaC') {
-      var isLast = false;
-      while (!isLast) {
-        var metaBlockHeader = rf.readSync(1);
-        var header = metaBlockHeader[0];
-        isLast = ((header & 0x80) >> 7) == 1;
-        var type = header & 0x7F;
-        var sizes = rf.readSync(3);
-        var dataLength = (sizes[0] << 16) + (sizes[1] << 8) + sizes[2];
-        var metadataBytes = rf.readSync(dataLength);
-        var metadata = _createMetadata(type, isLast, metadataBytes, dataLength);
-        metadatas.add(metadata);
+    try {
+      var fileType = rf.readSync(4);
+      if (String.fromCharCodes(fileType) == 'fLaC') {
+        var isLast = false;
+        while (!isLast) {
+          var metaBlockHeader = rf.readSync(1);
+          var header = metaBlockHeader[0];
+          isLast = ((header & 0x80) >> 7) == 1;
+          var type = header & 0x7F;
+          var sizes = rf.readSync(3);
+          var dataLength = (sizes[0] << 16) + (sizes[1] << 8) + sizes[2];
+          var metadataBytes = rf.readSync(dataLength);
+          var metadata =
+              _createMetadata(type, isLast, metadataBytes, dataLength);
+          metadatas.add(metadata);
+        }
       }
+    } finally {
+      rf.closeSync();
     }
     return metadatas;
   }
@@ -61,29 +66,37 @@ class FlacInfo {
 class StreamReader {
   final Uint8List _rawData;
   int dataLength;
-  late String _bitData;
   int _index = 0;
 
   /// constructor
   ///
   /// [_rawData] is file byte data, [dataLength] is max length
-  StreamReader(this._rawData, this.dataLength) {
-    _bitData = _rawData.map((e) => e.toRadixString(2).padLeft(8, '0')).join('');
+  StreamReader(this._rawData, this.dataLength);
+
+  /// convert byte data to bit string value with [length] bits.
+  String convertByteToBit(int length) {
+    var start = _index ~/ 8;
+    var end = ((_index + length) / 8).ceil();
+    var bitData = _rawData
+        .sublist(start, end)
+        .map((e) => e.toRadixString(2).padLeft(8, '0'))
+        .join('')
+        .substring(_index % 8, _index % 8 + length);
+    return bitData;
   }
 
   ///  int value with the bit [length]
   ///
   /// get the bit with [length], and then covert bits to int value.
   int getInt(int length) {
-    var value =
-        int.parse(_bitData.substring(_index, _index + length), radix: 2);
+    var value = int.parse(convertByteToBit(length), radix: 2);
     _index = _index + length;
     return value;
   }
 
   /// get bit string value with [length] bits
   String getBits(int length) {
-    var value = _bitData.substring(_index, _index + length);
+    var value = convertByteToBit(length);
     _index = _index + length;
     return value;
   }
